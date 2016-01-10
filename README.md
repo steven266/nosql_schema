@@ -18,8 +18,18 @@ class Publication(Schema):
         'email': EmailField(),
     })
     keywords = ListField()
-```
+    
+publication = Publication()
+publication.title = 'My First Publication'
+publication.author = {
+    'name': 'John Doe',
+    'email': 'john.doe@example.org'
+}
+publication.keywords = ['scientific', 'neuro-sciences']
+publication.save()
 
+print Publication.find()
+```
 
 Contribution and License
 ------------------------
