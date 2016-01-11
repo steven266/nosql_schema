@@ -1,4 +1,4 @@
-from validators import Validator, StringValidator, RegexpValidator, ChoiceValidator, DictValidator, ListValidator
+from validators import *
 
 
 class Field:
@@ -24,9 +24,26 @@ class Field:
         return valid
 
 
-# TODO: implement
 class NumberField(Field):
-    pass
+    validators = [Validator, NumberValidator, MinValidator, MaxValidator, RangeValidator]
+
+    def __init__(self, **kwargs):
+        Field.__init__(self, **kwargs)
+
+        try:
+            self.min = kwargs.pop('min')
+        except KeyError:
+            self.min = None
+
+        try:
+            self.max = kwargs.pop('max')
+        except KeyError:
+            self.max = None
+
+        try:
+            self.range = kwargs.pop('range')
+        except KeyError:
+            self.range = None
 
 
 class StringField(Field):
@@ -58,11 +75,25 @@ class ChoiceField(StringField):
             self.choices = None
 
 
-# TODO: implement 'allowed_fields'
 class DictField(Field):
     validators = [Validator, DictValidator]
 
+    def __init__(self, **kwargs):
+        Field.__init__(self, **kwargs)
 
-# TODO: implement 'allowed_values'
+        try:
+            self.allowed_fields = kwargs.pop('allowed_fields')
+        except KeyError:
+            self.allowed_fields = None
+
+
 class ListField(Field):
     validators = [Validator, ListValidator]
+
+    def __init__(self, **kwargs):
+        Field.__init__(self, **kwargs)
+
+        try:
+            self.allowed_values = kwargs.pop('allowed_values')
+        except KeyError:
+            self.allowed_values = None
