@@ -46,7 +46,7 @@ class Schema:
             with nosqlite.Connection(self.config['DATABASE_PATH']) as db:
                 collection_name = self.__class__.__name__
                 collection = db[collection_name]
-                collection.update({'_id': document['_id']}, document)
+                collection.update(document)
                 return self._id
         else:
             # insert
