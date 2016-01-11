@@ -1,15 +1,24 @@
 import nosqlite
 from fields import Field
 from exceptions import ValidationError
-import config as base_config
+
+try:
+    import config as base_config
+except ImportError:
+    base_config = None
 
 
 class Schema:
     @staticmethod
     def get_config():
-        config = vars(base_config)
+        config = dict()
+
+        if base_config:
+            config = vars(base_config)
+
         if 'DATABASE_PATH' not in config:
             config['DATABASE_PATH'] = 'database.db'
+
         return config
 
     def __init__(self, **kwargs):
@@ -122,3 +131,25 @@ class Schema:
             document = collection.find_one(query)
 
             return cls(__dictionary=document)
+
+    @classmethod
+    def count(cls, query=None):
+        config = Schema.get_config()
+        with nosqlite.Connection(config['DATABASE_PATH']) as db:
+            collection_name = cls.__name__
+            collection = db[collection_name]
+
+            return collection.count()
+
+        return False
+
+    @classmethod
+    def drop(cls, query=None):
+        config = Schema.get_config()
+        with nosqlite.Connection(config['DATABASE_PATH']) as db:
+            collection_name = cls.__name__
+            db.drop_collection(collection_name)
+
+            return True
+
+        return False
