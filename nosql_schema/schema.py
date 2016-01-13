@@ -47,6 +47,8 @@ class Schema:
         if not self.__validate():
             return False
 
+        self.__post_process()
+
         # convert attributes to document
         document = self.__to_dict()
 
@@ -86,6 +88,20 @@ class Schema:
                     raise ValidationError('Invalid value "{0}" for field "{1}"'.format(value, k))
 
         return True
+
+    def __post_process(self):
+        attributes = self.__class__.__dict__
+        document = self.__to_dict()
+        for k, v in attributes.iteritems():
+            if isinstance(v, Field):
+                # workaround for getattr(self, k) as it returns class attribute if value is None?!
+                value = document.get(k)
+
+                # process value
+                value = v.process(value)
+
+                # set attribute to self object
+                setattr(self, k, value)
 
     def __to_dict(self):
         # remove all undefined attributes and add defined attributes

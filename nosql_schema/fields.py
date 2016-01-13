@@ -1,4 +1,5 @@
 from validators import *
+from exceptions import PasswordFuncError
 
 
 class Field:
@@ -14,6 +15,24 @@ class Field:
             self.default = kwargs.pop('default')
         except KeyError:
             self.default = None
+
+        try:
+            self.post_processors = kwargs.pop('post_processors')
+
+            if type(self.post_processors) is not list:
+                self.post_processors = [self.post_processors]
+        except KeyError:
+            self.post_processors = None
+
+    def process(self, value=None):
+        if type(self.post_processors) is not list:
+            return value
+
+        for processor in self.post_processors:
+            if hasattr(processor, '__call__'):
+                value = processor(value=value)
+
+        return value
 
     def validate(self, value=None):
         valid = True
@@ -71,6 +90,35 @@ class StringField(Field):
 class EmailField(StringField):
     def __init__(self, **kwargs):
         StringField.__init__(self, regexp=r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)", **kwargs)
+
+
+class PasswordField(StringField):
+    def __init__(self, **kwargs):
+        try:
+            post_processors = kwargs.pop('post_processors')
+            if type(self.post_processors) is not list:
+                self.post_processors = [self.post_processors]
+        except KeyError:
+            post_processors = []
+
+        try:
+            min_len = min(5, kwargs.pop('min'))
+        except KeyError:
+            min_len = 5
+
+        try:
+            max_len = min(5, kwargs.pop('max'))
+        except KeyError:
+            max_len = None
+
+        try:
+            password_func = kwargs.pop('password_func')
+        except KeyError:
+            raise PasswordFuncError('Parameter "password_func" is mandatory!')
+
+        post_processors.append(password_func)
+
+        StringField.__init__(self, post_processors=post_processors, min=min_len, max=max_len, **kwargs)
 
 
 class ChoiceField(StringField):
