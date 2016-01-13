@@ -47,10 +47,20 @@ class NumberField(Field):
 
 
 class StringField(Field):
-    validators = [Validator, StringValidator, RegexpValidator]
+    validators = [Validator, StringValidator, StringMinValidator, StringMaxValidator, RegexpValidator]
 
     def __init__(self, **kwargs):
         Field.__init__(self, **kwargs)
+
+        try:
+            self.min = kwargs.pop('min')
+        except KeyError:
+            self.min = None
+
+        try:
+            self.max = kwargs.pop('max')
+        except KeyError:
+            self.max = None
 
         try:
             self.regexp = kwargs.pop('regexp')

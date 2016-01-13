@@ -80,6 +80,32 @@ class RangeValidator(Validator):
         return True
 
 
+class StringMinValidator(Validator):
+    @staticmethod
+    def validate(value=None, field=None):
+        # skip all tests if not required and not defined
+        if not field.required and value is None:
+            return True
+
+        if field.min and len(value) < field.min:
+            return False
+
+        return True
+
+
+class StringMaxValidator(Validator):
+    @staticmethod
+    def validate(value=None, field=None):
+        # skip all tests if not required and not defined
+        if not field.required and value is None:
+            return True
+
+        if field.max and len(value) > field.max:
+            return False
+
+        return True
+
+
 class RegexpValidator(Validator):
     @staticmethod
     def validate(value=None, field=None):
