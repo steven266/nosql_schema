@@ -124,7 +124,7 @@ class Schema:
 
     # class methods
     @classmethod
-    def find(cls, query=None, limit=None):
+    def find(cls, query=None, limit=None, order_by=None, reverse=False):
         config = Schema.get_config()
         with nosqlite.Connection(config['DATABASE_PATH']) as db:
             collection_name = cls.__name__
@@ -132,6 +132,19 @@ class Schema:
 
             documents = []
             results = collection.find(query, limit)
+
+            if order_by is not None:
+                def deep_sort(d, order_by):
+                    keys = order_by.split('.')
+                    val = d
+                    for key in keys:
+                        val = val.get(key, None)
+                        if val is None:
+                            return None
+                    return val
+
+                results = sorted(results, key=lambda d: deep_sort(d, order_by), reverse=reverse)
+
             for document in results:
                 instance = cls(__dictionary=document)
                 documents.append(instance)
@@ -140,6 +153,7 @@ class Schema:
 
     @classmethod
     def find_one(cls, query=None):
+        # TODO: compose find_one from find with limit 1
         config = Schema.get_config()
         with nosqlite.Connection(config['DATABASE_PATH']) as db:
             collection_name = cls.__name__
