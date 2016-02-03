@@ -163,7 +163,7 @@ class Schema:
             return cls(__dictionary=document)
 
     @classmethod
-    def count(cls, query=None):
+    def count(cls):
         config = Schema.get_config()
         with nosqlite.Connection(config['DATABASE_PATH']) as db:
             collection_name = cls.__name__
@@ -174,7 +174,7 @@ class Schema:
         return False
 
     @classmethod
-    def drop(cls, query=None):
+    def drop(cls):
         config = Schema.get_config()
         with nosqlite.Connection(config['DATABASE_PATH']) as db:
             collection_name = cls.__name__
