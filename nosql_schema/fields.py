@@ -65,6 +65,10 @@ class NumberField(Field):
             self.range = None
 
 
+class DateField(NumberField):
+    validators = [Validator, NumberValidator, MinValidator, MaxValidator, RangeValidator]
+
+
 class StringField(Field):
     validators = [Validator, StringValidator, StringMinValidator, StringMaxValidator, RegexpValidator]
 
