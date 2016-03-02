@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='nosql_schema',
-    version='0.0.1.dev4',
+    version='0.0.1.dev5',
     description='A simple object document mapper for nosqlite',
     url='https://github.com/steven266/nosql_schema',
     author='Steven Cardoso',
