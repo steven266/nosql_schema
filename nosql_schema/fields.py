@@ -111,7 +111,7 @@ class PasswordField(StringField):
             min_len = 5
 
         try:
-            max_len = min(5, kwargs.pop('max'))
+            max_len = max(min_len, kwargs.pop('max'))
         except KeyError:
             max_len = None
 
