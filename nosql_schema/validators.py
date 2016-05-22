@@ -147,7 +147,6 @@ class DictValidator(Validator):
         if field.allowed_fields:
             for k,v in field.allowed_fields.iteritems():
                 if k in value and value[k] is not None and not v.validate(value=value[k]):
-                    print v
                     return False
 
         return True
