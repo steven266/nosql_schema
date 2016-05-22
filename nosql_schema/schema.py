@@ -130,26 +130,22 @@ class Schema:
             collection_name = cls.__name__
             collection = db[collection_name]
 
-            documents = []
             results = collection.find(query, limit)
+            results = [cls(__dictionary=document) for document in results]
 
             if order_by is not None:
-                def deep_sort(d, order_by):
-                    keys = order_by.split('.')
+                def deep_sort(d, order_key):
+                    keys = order_key.split('.')
                     val = d
                     for key in keys:
-                        val = val.get(key, None)
+                        val = getattr(val, key)
                         if val is None:
                             return None
                     return val
 
                 results = sorted(results, key=lambda d: deep_sort(d, order_by), reverse=reverse)
 
-            for document in results:
-                instance = cls(__dictionary=document)
-                documents.append(instance)
-
-            return documents
+            return results
 
     @classmethod
     def find_one(cls, query=None):
