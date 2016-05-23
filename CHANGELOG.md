@@ -4,6 +4,9 @@
 ### Added
 - Changelog
 
+### Changed
+- compose find_one from find with limit 1
+
 ### Removed
 - Debug output
 

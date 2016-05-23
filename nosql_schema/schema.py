@@ -149,14 +149,10 @@ class Schema:
 
     @classmethod
     def find_one(cls, query=None):
-        # TODO: compose find_one from find with limit 1
-        config = Schema.get_config()
-        with nosqlite.Connection(config['DATABASE_PATH']) as db:
-            collection_name = cls.__name__
-            collection = db[collection_name]
-            document = collection.find_one(query)
-
-            return cls(__dictionary=document)
+        result = cls.find(query, limit=1)
+        if len(result) > 0:
+            return result[0]
+        return None
 
     @classmethod
     def distinct(cls, key):
