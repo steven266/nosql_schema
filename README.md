@@ -34,4 +34,7 @@ print Publication.find()
 Contribution and License
 ------------------------
 Developed by Steven Cardoso <hello@steven266.de> and is licensed under the
-terms of a MIT license. Contributions are welcomed and appreciated.
+terms of a MIT license.
+
+Contributions are welcomed and appreciated. Writing (new) test-cases is
+appreciated.
