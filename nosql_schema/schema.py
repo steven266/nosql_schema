@@ -1,29 +1,40 @@
-import nosqlite
-from fields import Field
-from exceptions import ValidationError
+"""
+This module contains the Schema-class definition
+"""
 
-try:
-    import config as base_config
-except ImportError:
-    base_config = None
+from .fields import Field
+from .exceptions import ValidationError
+from .db import get_default_handler, create_handler
 
 
 class Schema:
-    @staticmethod
-    def get_config():
-        config = dict()
+    __config__ = None
 
-        if base_config:
-            config = vars(base_config)
+    @classmethod
+    def get_handler(cls):
+        """
+        Get DatabaseHandler
 
-        if 'DATABASE_PATH' not in config:
-            config['DATABASE_PATH'] = 'database.db'
+        :return: DatabaseHandler
+        """
+        config = cls.__config__
 
-        return config
+        if config is None:
+            handler = get_default_handler()
+        else:
+            handler = create_handler(**config)
 
-    def __init__(self, **kwargs):
-        self.config = Schema.get_config()
+        return handler
+
+    def __init__(self, *args, **kwargs):
+        """
+        Instantiate new object
+
+        :param __dictionary: Dictionary to use for object attributes
+        """
+
         self._id = None
+        self.__database_handle = Schema.get_handler()
 
         attributes = self.__class__.__dict__
         # creation by dictionary -> see find / find_one
@@ -54,14 +65,14 @@ class Schema:
 
         if self._id is not None:
             # update
-            with nosqlite.Connection(self.config['DATABASE_PATH']) as db:
+            with self.__database_handle as db:
                 collection_name = self.__class__.__name__
                 collection = db[collection_name]
                 collection.update(document)
                 return self._id
         else:
             # insert
-            with nosqlite.Connection(self.config['DATABASE_PATH']) as db:
+            with self.__database_handle as db:
                 collection_name = self.__class__.__name__
                 collection = db[collection_name]
                 document = collection.insert(document)
@@ -71,7 +82,7 @@ class Schema:
     def delete(self):
         document = self.__to_dict()
         if '_id' in document:
-            with nosqlite.Connection(self.config['DATABASE_PATH']) as db:
+            with self.__database_handle as db:
                 collection_name = self.__class__.__name__
                 collection = db[collection_name]
                 return collection.delete({'_id': document['_id']})
@@ -125,8 +136,9 @@ class Schema:
     # class methods
     @classmethod
     def find(cls, query=None, limit=None, order_by=None, reverse=False):
-        config = Schema.get_config()
-        with nosqlite.Connection(config['DATABASE_PATH']) as db:
+        database_handle = Schema.get_handler()
+
+        with database_handle as db:
             collection_name = cls.__name__
             collection = db[collection_name]
 
@@ -156,16 +168,16 @@ class Schema:
 
     @classmethod
     def distinct(cls, key):
-        config = Schema.get_config()
-        with nosqlite.Connection(config['DATABASE_PATH']) as db:
+        database_handle = Schema.get_handler()
+        with database_handle as db:
             collection_name = cls.__name__
             collection = db[collection_name]
             return collection.distinct(key)
 
     @classmethod
     def count(cls, query=None):
-        config = Schema.get_config()
-        with nosqlite.Connection(config['DATABASE_PATH']) as db:
+        database_handle = Schema.get_handler()
+        with database_handle as db:
             collection_name = cls.__name__
             collection = db[collection_name]
 
@@ -175,8 +187,8 @@ class Schema:
 
     @classmethod
     def drop(cls):
-        config = Schema.get_config()
-        with nosqlite.Connection(config['DATABASE_PATH']) as db:
+        database_handle = Schema.get_handler()
+        with database_handle as db:
             collection_name = cls.__name__
             db.drop_collection(collection_name)
 

@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='nosql_schema',
-    version='0.0.2',
+    version='0.1.0',
     description='A simple object document mapper for nosqlite',
     url='https://github.com/steven266/nosql_schema',
     author='Steven Cardoso',
@@ -24,5 +24,5 @@ setup(
     ],
     keywords='odm nosqlite sqlite flask',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    install_requires=['nosqlite'],
+    install_requires=[],
 )
