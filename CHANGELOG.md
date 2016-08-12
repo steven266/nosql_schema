@@ -2,35 +2,38 @@
 
 ## [0.1.0] [unreleased]
 ### Added
-- Changelog
+- Added Changelog
 - Added abstraction layer for database handling
 - Added MongoDB support
+- Added MongoDB configuration example
 
 ### Changed
-- compose find_one from find with limit 1
+- Changed `find_one`: use find with limit 1
+- Changed imports: use relative paths
+- *BREAKING*: Changed configuration - See README.md
 
 ### Removed
 - Debug output
 
 ## [0.0.2] - 2016-05-22
 ### Added
-- Possibility to sort by class '@property'
-- Missing fields and validators
-- Unit tests
-- StringMinValidator
-- StringMaxValidator
-- Post processor
-- PasswordField
-- Ordering in find-method
-- DateField
-- Distinct-method
+- Added possibility to sort by class `@property`
+- Added missing fields and validators
+- Added unit tests
+- Added `StringMinValidator`
+- Added `StringMaxValidator`
+- Added post processor
+- Added `PasswordField`
+- Added ordering in `find` method
+- Added `DateField`
+- Added `distinct` method
 
 ### Removed
-- Irrelevant arguments
+- Removed irrelevant arguments
 
 ### Fixed
-- Update method (save)
-- Password MaxLength
+- Fixed `update` method (save)
+- Fixed password `MaxLength`
 
 ## [0.0.1] - 2016-05-20
 - Initial release

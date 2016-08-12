@@ -1,68 +1,40 @@
-import nosqlite
-from fields import Field
-from exceptions import ValidationError
+"""
+This module contains the Schema-class definition
+"""
 
-try:
-    import config as base_config
-except ImportError:
-    base_config = None
+from .fields import Field
+from .exceptions import ValidationError
+from .db import get_default_handler, create_handler
 
 
 class Schema:
-    @staticmethod
-    def get_config():
+    __config__ = None
+
+    @classmethod
+    def get_handler(cls):
         """
-        Get database configuration
+        Get DatabaseHandler
 
-        :return: Configuration dict
+        :return: DatabaseHandler
+        """
+        config = cls.__config__
+
+        if config is None:
+            handler = get_default_handler()
+        else:
+            handler = create_handler(**config)
+
+        return handler
+
+    def __init__(self, *args, **kwargs):
+        """
+        Instantiate new object
+
+        :param __dictionary: Dictionary to use for object attributes
         """
 
-        config = dict()
-
-        if base_config:
-            config = vars(base_config)
-
-        if 'DATABASE' not in config:
-            config['DATABASE'] = 'nosqlite'
-
-        if config['DATABASE'] == 'nosqlite':
-            if 'DATABASE_PATH' not in config:
-                config['DATABASE_PATH'] = 'database.db'
-        elif config['DATABASE'] == 'mongodb':
-            if 'DATABASE_HOST' not in config:
-                config['DATABASE_HOST'] = 'localhost'
-
-            if 'DATABASE_PORT' not in config:
-                config['DATABASE_PORT'] = '27017'
-
-            if 'DATABASE_NAME' not in config:
-                config['DATABASE_NAME'] = 'test'
-
-        return config
-
-    @staticmethod
-    def get_handle():
-        """
-        Get database handle
-
-        :return: Database handle
-        """
-        config = Schema.get_config()
-        handle = None
-
-        if config['DATABASE'] == 'nosqlite':
-            from nosql_schema.db import nosqlite
-            handle = nosqlite.DatabaseHandler(database_path=config['DATABASE_PATH'])
-        elif config['DATABASE'] == 'mongodb':
-            from nosql_schema.db import mongodb
-            handle = mongodb.DatabaseHandler(host=config['DATABASE_HOST'], port=config['DATABASE_PORT'],
-                                             database_name=config['DATABASE_NAME'])
-
-        return handle
-
-    def __init__(self, **kwargs):
         self._id = None
-        self.__database_handle = Schema.get_handle()
+        self.__database_handle = Schema.get_handler()
 
         attributes = self.__class__.__dict__
         # creation by dictionary -> see find / find_one
@@ -164,7 +136,7 @@ class Schema:
     # class methods
     @classmethod
     def find(cls, query=None, limit=None, order_by=None, reverse=False):
-        database_handle = Schema.get_handle()
+        database_handle = Schema.get_handler()
 
         with database_handle as db:
             collection_name = cls.__name__
@@ -196,7 +168,7 @@ class Schema:
 
     @classmethod
     def distinct(cls, key):
-        database_handle = Schema.get_handle()
+        database_handle = Schema.get_handler()
         with database_handle as db:
             collection_name = cls.__name__
             collection = db[collection_name]
@@ -204,7 +176,7 @@ class Schema:
 
     @classmethod
     def count(cls, query=None):
-        database_handle = Schema.get_handle()
+        database_handle = Schema.get_handler()
         with database_handle as db:
             collection_name = cls.__name__
             collection = db[collection_name]
@@ -215,7 +187,7 @@ class Schema:
 
     @classmethod
     def drop(cls):
-        database_handle = Schema.get_handle()
+        database_handle = Schema.get_handler()
         with database_handle as db:
             collection_name = cls.__name__
             db.drop_collection(collection_name)

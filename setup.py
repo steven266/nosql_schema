@@ -24,5 +24,5 @@ setup(
     ],
     keywords='odm nosqlite sqlite flask',
     packages=find_packages(exclude=['contrib', 'docs', 'tests']),
-    install_requires=['nosqlite'],
+    install_requires=[],
 )

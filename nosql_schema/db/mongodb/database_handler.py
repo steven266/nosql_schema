@@ -1,5 +1,5 @@
-from nosql_schema.db import AbstractDatabaseHandler
-from collection_handler import CollectionHandler
+from ...db import AbstractDatabaseHandler
+from .collection_handler import CollectionHandler
 from pymongo import MongoClient
 
 
@@ -9,10 +9,10 @@ class DatabaseHandler(AbstractDatabaseHandler):
     Handling MongoDB.
     """
 
-    def __init__(self, host='localhost', port='27017', database_name='test'):
+    def __init__(self, host='localhost', port='27017', name='test'):
         self.host = host
         self.port = port
-        self.database_name = database_name
+        self.database_name = name
         self.client = None
 
     def connect(self):

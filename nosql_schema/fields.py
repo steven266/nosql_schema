@@ -1,5 +1,9 @@
-from validators import *
-from exceptions import PasswordFuncError
+"""
+This module contains the Field-class definitions
+"""
+
+from .validators import *
+from .exceptions import PasswordFuncError
 
 
 class Field:
