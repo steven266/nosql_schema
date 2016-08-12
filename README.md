@@ -1,7 +1,7 @@
 nosql_schema
 ===========
 
-``nosqlite_schema`` is a simple object document mapper for NoSQL databases like
+``nosql_schema`` is a simple object document mapper for NoSQL databases like
 [nosqlite](https://github.com/shaunduncan/nosqlite) or [MongoDB](https://www.mongodb.com/).
  
 It provides a basic Schema-class that let's you define simple classes that are mapped to NoSQL collections.
