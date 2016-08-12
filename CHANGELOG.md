@@ -3,6 +3,8 @@
 ## [0.1.0] [unreleased]
 ### Added
 - Changelog
+- Added abstraction layer for database handling
+- Added MongoDB support
 
 ### Changed
 - compose find_one from find with limit 1
