@@ -1,5 +1,5 @@
-from nosql_schema.db import AbstractDatabaseHandler
-from collection_handler import CollectionHandler
+from ...db import AbstractDatabaseHandler
+from .collection_handler import CollectionHandler
 from nosqlite import Connection
 
 
@@ -9,8 +9,12 @@ class DatabaseHandler(AbstractDatabaseHandler):
     Handling nosqlite database.
     """
 
-    def __init__(self, database_path=':memory:'):
-        self.database_path = database_path
+    def __init__(self, path=':memory:'):
+        """
+        Initialize DatabaseHandler
+        :param path: Path to the database or ':memory:'
+        """
+        self.path = path
         self.connection = None
 
     def connect(self):
@@ -18,7 +22,7 @@ class DatabaseHandler(AbstractDatabaseHandler):
         Connect to a database.
         """
         self.close()
-        self.connection = Connection(self.database_path)
+        self.connection = Connection(self.path)
 
     def close(self):
         """

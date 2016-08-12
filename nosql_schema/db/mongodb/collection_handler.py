@@ -1,4 +1,4 @@
-from nosql_schema.db import AbstractCollectionHandler
+from ...db import AbstractCollectionHandler
 from bson.objectid import ObjectId
 
 

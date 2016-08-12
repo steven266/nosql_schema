@@ -2,6 +2,12 @@ import unittest
 import os
 from nosql_schema import fields, schema, exceptions
 
+# Configure database
+schema.Schema.__config__ = {
+    'database': 'nosqlite',
+    'path': './database.db'
+}
+
 
 class TestFields(unittest.TestCase):
     def test_field(self):
@@ -159,7 +165,7 @@ class TestNoSQLSchema(unittest.TestCase):
 
     def tearDown(self):
         # remove database
-        filename = TestNoSQLSchema.MyTestSchema.get_config()['DATABASE_PATH']
+        filename = schema.Schema.__config__['path']
         try:
             os.remove(filename)
         except OSError:
