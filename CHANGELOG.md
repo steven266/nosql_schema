@@ -1,6 +1,10 @@
 # Changelog
 
 ## [0.2.0] - [unreleased]
+### Added
+- Added possibility to create an object by dictionary
+(pass `__dictionary` argument)
+
 ### Changed
 - Changed `__to_dict` method to public method `to_dict`
 

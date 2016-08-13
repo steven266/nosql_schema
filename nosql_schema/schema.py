@@ -21,13 +21,11 @@ class Schema:
         self.__database_handle = Schema.get_handler()
 
         attributes = self.__class__.__dict__
+
         # creation by dictionary -> see find / find_one
-        try:
-            field_dictionary = kwargs.pop('__dictionary')
-            if field_dictionary:
-                setattr(self, '_id', field_dictionary.pop('_id'))
-        except KeyError:
-            field_dictionary = None
+        field_dictionary = kwargs.pop('__dictionary', None)
+        if field_dictionary and '_id' in field_dictionary:
+            setattr(self, '_id', field_dictionary.pop('_id'))
 
         # set default values, override with passed values, then with __dictionary
         for k, v in attributes.iteritems():
