@@ -10,22 +10,6 @@ from .db import get_default_handler, create_handler
 class Schema:
     __config__ = None
 
-    @classmethod
-    def get_handler(cls):
-        """
-        Get DatabaseHandler
-
-        :return: DatabaseHandler
-        """
-        config = cls.__config__
-
-        if config is None:
-            handler = get_default_handler()
-        else:
-            handler = create_handler(**config)
-
-        return handler
-
     def __init__(self, *args, **kwargs):
         """
         Instantiate new object
@@ -61,7 +45,7 @@ class Schema:
         self.__post_process()
 
         # convert attributes to document
-        document = self.__to_dict()
+        document = self.to_dict()
 
         if self._id is not None:
             # update
@@ -80,7 +64,7 @@ class Schema:
                 return self._id
 
     def delete(self):
-        document = self.__to_dict()
+        document = self.to_dict()
         if '_id' in document:
             with self.__database_handle as db:
                 collection_name = self.__class__.__name__
@@ -89,7 +73,7 @@ class Schema:
 
     def __validate(self):
         attributes = self.__class__.__dict__
-        document = self.__to_dict()
+        document = self.to_dict()
         for k, v in attributes.iteritems():
             if isinstance(v, Field):
                 # workaround for getattr(self, k) as it returns class attribute if value is None?!
@@ -102,7 +86,7 @@ class Schema:
 
     def __post_process(self):
         attributes = self.__class__.__dict__
-        document = self.__to_dict()
+        document = self.to_dict()
         for k, v in attributes.iteritems():
             if isinstance(v, Field):
                 # workaround for getattr(self, k) as it returns class attribute if value is None?!
@@ -114,7 +98,7 @@ class Schema:
                 # set attribute to self object
                 setattr(self, k, value)
 
-    def __to_dict(self):
+    def to_dict(self):
         # remove all undefined attributes and add defined attributes
         raw_document = self.__dict__
         document = dict()
@@ -134,6 +118,22 @@ class Schema:
         return document
 
     # class methods
+    @classmethod
+    def get_handler(cls):
+        """
+        Get DatabaseHandler
+
+        :return: DatabaseHandler
+        """
+        config = cls.__config__
+
+        if config is None:
+            handler = get_default_handler()
+        else:
+            handler = create_handler(**config)
+
+        return handler
+
     @classmethod
     def find(cls, query=None, limit=None, order_by=None, reverse=False):
         database_handle = Schema.get_handler()

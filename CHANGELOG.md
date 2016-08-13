@@ -1,6 +1,9 @@
 # Changelog
 
 ## [0.2.0] - [unreleased]
+### Changed
+- Changed `__to_dict` method to public method `to_dict`
+
 ### Fixed
 - Fixed `drop_collection` on MongoDB
 
