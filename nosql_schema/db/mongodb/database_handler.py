@@ -38,7 +38,7 @@ class DatabaseHandler(AbstractDatabaseHandler):
         :return: True on success, else False
         """
         if self.client:
-            return self.client.drop_collection(collection_name)
+            return self.client[self.database_name][collection_name].drop()
         return False
 
     def __getitem__(self, collection_name):

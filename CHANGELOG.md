@@ -1,6 +1,8 @@
 # Changelog
 
 ## [0.2.0] - [unreleased]
+### Fixed
+- Fixed `drop_collection` on MongoDB
 
 ## [0.1.0] - 2016-08-12
 ### Added
