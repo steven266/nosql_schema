@@ -7,6 +7,7 @@
 
 ### Changed
 - Changed `__to_dict` method to public method `to_dict`
+- Changed `Schema` to `cls` when calling `get_handler`
 
 ### Fixed
 - Fixed `drop_collection` on MongoDB

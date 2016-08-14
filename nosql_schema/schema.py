@@ -18,7 +18,7 @@ class Schema:
         """
 
         self._id = None
-        self.__database_handle = Schema.get_handler()
+        self.__database_handle = self.__class__.get_handler()
 
         attributes = self.__class__.__dict__
 
@@ -134,7 +134,7 @@ class Schema:
 
     @classmethod
     def find(cls, query=None, limit=None, order_by=None, reverse=False):
-        database_handle = Schema.get_handler()
+        database_handle = cls.get_handler()
 
         with database_handle as db:
             collection_name = cls.__name__
@@ -166,7 +166,7 @@ class Schema:
 
     @classmethod
     def distinct(cls, key):
-        database_handle = Schema.get_handler()
+        database_handle = cls.get_handler()
         with database_handle as db:
             collection_name = cls.__name__
             collection = db[collection_name]
@@ -174,7 +174,7 @@ class Schema:
 
     @classmethod
     def count(cls, query=None):
-        database_handle = Schema.get_handler()
+        database_handle = cls.get_handler()
         with database_handle as db:
             collection_name = cls.__name__
             collection = db[collection_name]
@@ -185,7 +185,7 @@ class Schema:
 
     @classmethod
     def drop(cls):
-        database_handle = Schema.get_handler()
+        database_handle = cls.get_handler()
         with database_handle as db:
             collection_name = cls.__name__
             db.drop_collection(collection_name)
