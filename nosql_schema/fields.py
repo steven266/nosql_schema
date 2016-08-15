@@ -3,6 +3,7 @@ This module contains the Field-class definitions
 """
 
 from .validators import *
+from .post_processors import *
 from .exceptions import PasswordFuncError
 
 
@@ -67,6 +68,18 @@ class NumberField(Field):
             self.range = kwargs.pop('range')
         except KeyError:
             self.range = None
+
+
+class BooleanField(Field):
+    validators = []
+
+    def __init__(self, **kwargs):
+        Field.__init__(self, **kwargs)
+
+        try:
+            self.post_processors.append(bool_processor)
+        except AttributeError:
+            self.post_processors = [bool_processor]
 
 
 class DateField(NumberField):

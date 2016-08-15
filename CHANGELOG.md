@@ -4,6 +4,7 @@
 ### Added
 - Added possibility to create an object by dictionary
 (pass `__dictionary` argument)
+- Added `BooleanField`
 
 ### Changed
 - Changed `__to_dict` method to public method `to_dict`
