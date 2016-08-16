@@ -95,11 +95,12 @@ class CollectionHandler(AbstractCollectionHandler):
         return self.collection_handle.count(query)
 
     @staticmethod
-    def convert_ids(query):
+    def convert_ids(query, is_id=False):
         """
         Casts all '_id' to 'ObjectId'
 
         :param query: Query that has to be transformed
+        :param is_id: Indicates that the current part derived from an '_id'
         :return: Transformed query (dict)
         """
         if not isinstance(query, dict):
@@ -108,8 +109,10 @@ class CollectionHandler(AbstractCollectionHandler):
         for k,v in query.iteritems():
             if k == '_id':
                 if isinstance(v, dict):
-                    query[k] = CollectionHandler.convert_ids(v)
+                    query[k] = CollectionHandler.convert_ids(v, True)
                 elif type(v) in [str, unicode]:
                     query[k] = ObjectId(unicode(v))
+            elif is_id and type(v) in [str, unicode]:
+                query[k] = ObjectId(unicode(v))
 
         return query
