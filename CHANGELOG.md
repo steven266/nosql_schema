@@ -5,6 +5,7 @@
 - Added possibility to create an object by dictionary
 (pass `__dictionary` argument)
 - Added `BooleanField`
+- Added `offset` to `find` method
 
 ### Changed
 - Changed `__to_dict` method to public method `to_dict`

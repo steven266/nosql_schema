@@ -152,6 +152,9 @@ class TestNoSQLSchema(unittest.TestCase):
 
         self.assertTrue(obj.name == 'Jane Doe')
 
+        result = TestNoSQLSchema.MyTestSchema.find(offset=1)
+        self.assertEqual(result, [])
+
         obj.delete()
         self.assertTrue(TestNoSQLSchema.MyTestSchema.count() == 0)
 

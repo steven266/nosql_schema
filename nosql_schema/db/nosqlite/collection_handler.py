@@ -9,7 +9,7 @@ class CollectionHandler(AbstractCollectionHandler):
     def __init__(self, collection_handle):
         self.collection_handle = collection_handle
 
-    def find(self, query=None, limit=None):
+    def find(self, query=None, limit=None, offset=0):
         """
         Find all matching documents in database.
 
@@ -18,7 +18,7 @@ class CollectionHandler(AbstractCollectionHandler):
         :return: List of documents
         """
         query = CollectionHandler.convert_ids(query)
-        return self.collection_handle.find(query, limit)
+        return self.collection_handle.find(query, limit)[offset:]
 
     def delete(self, query):
         """

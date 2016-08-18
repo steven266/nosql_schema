@@ -10,12 +10,13 @@ class CollectionHandler(AbstractCollectionHandler):
     def __init__(self, collection_handle):
         self.collection_handle = collection_handle
 
-    def find(self, query=None, limit=0):
+    def find(self, query=None, limit=0, offset=0):
         """
         Find all matching documents in database.
 
         :param query: Query to match with
         :param limit: Limit of documents to retrieve
+        :param offset: Number of documents to skip
         :return: List of documents
         """
         if limit is None:
@@ -23,7 +24,7 @@ class CollectionHandler(AbstractCollectionHandler):
 
         query = CollectionHandler.convert_ids(query)
 
-        result = self.collection_handle.find(filter=query, limit=limit)
+        result = self.collection_handle.find(filter=query, limit=limit).skip(offset)
 
         documents = []
         for document in result:

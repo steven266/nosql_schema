@@ -133,14 +133,14 @@ class Schema:
         return handler
 
     @classmethod
-    def find(cls, query=None, limit=None, order_by=None, reverse=False):
+    def find(cls, query=None, limit=None, order_by=None, reverse=False, offset=0):
         database_handle = cls.get_handler()
 
         with database_handle as db:
             collection_name = cls.__name__
             collection = db[collection_name]
 
-            results = collection.find(query, limit)
+            results = collection.find(query, limit, offset)
             results = [cls(__dictionary=document) for document in results]
 
             if order_by is not None:
