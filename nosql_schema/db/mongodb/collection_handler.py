@@ -113,7 +113,10 @@ class CollectionHandler(AbstractCollectionHandler):
                     query[k] = CollectionHandler.convert_ids(v, True)
                 elif type(v) in [str, unicode]:
                     query[k] = ObjectId(unicode(v))
-            elif is_id and type(v) in [str, unicode]:
-                query[k] = ObjectId(unicode(v))
+            elif is_id:
+                if type(v) in [str, unicode]:
+                    query[k] = ObjectId(unicode(v))
+                elif type(v) == list:
+                    query[k] = [ObjectId(unicode(id_)) for id_ in v]
 
         return query

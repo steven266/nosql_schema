@@ -86,7 +86,10 @@ class CollectionHandler(AbstractCollectionHandler):
                     query[k] = CollectionHandler.convert_ids(v, True)
                 elif type(v) in [str, unicode]:
                     query[k] = int(v)
-            elif is_id and type(v) in [str, unicode]:
-                query[k] = int(v)
+            elif is_id:
+                if type(v) in [str, unicode]:
+                    query[k] = int(v)
+                elif type(v) == list:
+                    query[k] = [int(id_) for id_ in v]
 
         return query
