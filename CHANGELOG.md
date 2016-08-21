@@ -6,6 +6,7 @@
 (pass `__dictionary` argument)
 - Added `BooleanField`
 - Added `offset` to `find` method
+- Added class `SchemaId` for Id-casting
 
 ### Changed
 - Changed `__to_dict` method to public method `to_dict`

@@ -1,4 +1,5 @@
 from ...db import AbstractCollectionHandler
+from ...helper import SchemaId
 from bson.objectid import ObjectId
 
 
@@ -107,16 +108,25 @@ class CollectionHandler(AbstractCollectionHandler):
         if not isinstance(query, dict):
             return {}
 
-        for k,v in query.iteritems():
-            if k == '_id':
+        new_query = query.copy()
+
+        for k,v in new_query.iteritems():
+            if isinstance(v, SchemaId):
+                if v.is_list:
+                    new_query[k] = [ObjectId(unicode(id_)) for id_ in v.id_list]
+                else:
+                    new_query[k] = ObjectId(unicode(v.id_))
+            elif k == '_id':
                 if isinstance(v, dict):
-                    query[k] = CollectionHandler.convert_ids(v, True)
+                    new_query[k] = CollectionHandler.convert_ids(v, True)
                 elif type(v) in [str, unicode]:
-                    query[k] = ObjectId(unicode(v))
+                    new_query[k] = ObjectId(unicode(v))
             elif is_id:
                 if type(v) in [str, unicode]:
-                    query[k] = ObjectId(unicode(v))
+                    new_query[k] = ObjectId(unicode(v))
                 elif type(v) == list:
-                    query[k] = [ObjectId(unicode(id_)) for id_ in v]
+                    new_query[k] = [ObjectId(unicode(id_)) for id_ in v]
+            elif isinstance(v, dict):
+                new_query[k] = CollectionHandler.convert_ids(v)
 
-        return query
+        return new_query
