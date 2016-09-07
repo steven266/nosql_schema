@@ -15,6 +15,7 @@
 ### Fixed
 - Fixed `drop_collection` on MongoDB
 - Fixed `convert_ids` to handle operators on `_id`
+- Fixed `convert_ids` for combining operators, e.g. `$and`
 
 ## [0.1.0] - 2016-08-12
 ### Added

@@ -101,5 +101,8 @@ class CollectionHandler(AbstractCollectionHandler):
                     new_query[k] = [int(id_) for id_ in v]
             elif isinstance(v, dict):
                 new_query[k] = CollectionHandler.convert_ids(v)
+            elif isinstance(v, list):
+                new_list = [CollectionHandler.convert_ids(x) for x in v]
+                new_query[k] = new_list
 
         return new_query
