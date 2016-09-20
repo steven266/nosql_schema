@@ -193,3 +193,25 @@ class Schema:
             return True
 
         return False
+
+    @classmethod
+    def create_index(cls, keys, **kwargs):
+        database_handle = cls.get_handler()
+        with database_handle as db:
+            collection_name = cls.__name__
+            collection = db[collection_name]
+
+            return collection.create_index(keys, **kwargs)
+
+        return False
+
+    @classmethod
+    def drop_index(cls, name):
+        database_handle = cls.get_handler()
+        with database_handle as db:
+            collection_name = cls.__name__
+            collection = db[collection_name]
+
+            return collection.drop_index(name)
+
+        return False

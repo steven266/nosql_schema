@@ -72,3 +72,21 @@ class AbstractCollectionHandler():
         :return: Number of documents
         """
         pass
+
+    @abstractmethod
+    def create_index(self, keys, **kwargs):
+        """
+        Creates an index on collection
+
+        :param keys: list of keys
+        :param kwargs: further arguments
+        """
+        pass
+
+    def drop_index(self, name):
+        """
+        Drops an index on collection
+
+        :param name: index name
+        """
+        pass

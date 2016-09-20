@@ -96,6 +96,23 @@ class CollectionHandler(AbstractCollectionHandler):
         query = CollectionHandler.convert_ids(query)
         return self.collection_handle.count(query)
 
+    def create_index(self, keys, **kwargs):
+        """
+        Creates an index on collection
+
+        :param keys: list of keys
+        :param kwargs: further arguments
+        """
+        self.collection_handle.create_index(keys, **kwargs)
+
+    def drop_index(self, name):
+        """
+        Drops an index on collection
+
+        :param name: index name
+        """
+        self.collection_handle.drop_index(name)
+
     @staticmethod
     def convert_ids(query, is_id=False):
         """
