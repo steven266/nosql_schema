@@ -47,6 +47,7 @@ class Schema:
 
         if self._id is not None:
             # update
+            self.__class__.on_update(document)
             with self.__database_handle as db:
                 collection_name = self.__class__.__name__
                 collection = db[collection_name]
@@ -54,6 +55,7 @@ class Schema:
                 return self._id
         else:
             # insert
+            self.__class__.on_create(document)
             with self.__database_handle as db:
                 collection_name = self.__class__.__name__
                 collection = db[collection_name]
@@ -64,6 +66,7 @@ class Schema:
     def delete(self):
         document = self.to_dict()
         if '_id' in document:
+            self.__class__.on_delete(document)
             with self.__database_handle as db:
                 collection_name = self.__class__.__name__
                 collection = db[collection_name]
@@ -215,3 +218,15 @@ class Schema:
             return collection.drop_index(name)
 
         return False
+
+    @classmethod
+    def on_create(cls, doc):
+        pass
+
+    @classmethod
+    def on_update(cls, doc):
+        pass
+
+    @classmethod
+    def on_delete(cls, doc):
+        pass

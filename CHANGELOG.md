@@ -8,6 +8,7 @@
 - Added `offset` to `find` method
 - Added class `SchemaId` for Id-casting
 - Added `create_index` and `drop_index`
+- Added `on_create`, `on_update` and `on_delete`-hook
 
 ### Changed
 - Changed `__to_dict` method to public method `to_dict`
