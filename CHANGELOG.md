@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.2.0] - 2016-09-26
+### Added
+- Added possibility to create an object by dictionary
+(pass `__dictionary` argument)
+- Added `BooleanField`
+- Added `offset` to `find` method
+- Added class `SchemaId` for Id-casting
+- Added `create_index` and `drop_index`
+- Added `on_create`, `on_update` and `on_delete`-hook
+
+### Changed
+- Changed `__to_dict` method to public method `to_dict`
+- Changed `Schema` to `cls` when calling `get_handler`
+
+### Fixed
+- Fixed `drop_collection` on MongoDB
+- Fixed `convert_ids` to handle operators on `_id`
+- Fixed `convert_ids` for combining operators, e.g. `$and`
+
 ## [0.1.0] - 2016-08-12
 ### Added
 - Added Changelog

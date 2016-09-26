@@ -10,22 +10,6 @@ from .db import get_default_handler, create_handler
 class Schema:
     __config__ = None
 
-    @classmethod
-    def get_handler(cls):
-        """
-        Get DatabaseHandler
-
-        :return: DatabaseHandler
-        """
-        config = cls.__config__
-
-        if config is None:
-            handler = get_default_handler()
-        else:
-            handler = create_handler(**config)
-
-        return handler
-
     def __init__(self, *args, **kwargs):
         """
         Instantiate new object
@@ -34,16 +18,14 @@ class Schema:
         """
 
         self._id = None
-        self.__database_handle = Schema.get_handler()
+        self.__database_handle = self.__class__.get_handler()
 
         attributes = self.__class__.__dict__
+
         # creation by dictionary -> see find / find_one
-        try:
-            field_dictionary = kwargs.pop('__dictionary')
-            if field_dictionary:
-                setattr(self, '_id', field_dictionary.pop('_id'))
-        except KeyError:
-            field_dictionary = None
+        field_dictionary = kwargs.pop('__dictionary', None)
+        if field_dictionary and '_id' in field_dictionary:
+            setattr(self, '_id', field_dictionary.pop('_id'))
 
         # set default values, override with passed values, then with __dictionary
         for k, v in attributes.iteritems():
@@ -61,10 +43,11 @@ class Schema:
         self.__post_process()
 
         # convert attributes to document
-        document = self.__to_dict()
+        document = self.to_dict()
 
         if self._id is not None:
             # update
+            self.__class__.on_update(document)
             with self.__database_handle as db:
                 collection_name = self.__class__.__name__
                 collection = db[collection_name]
@@ -72,6 +55,7 @@ class Schema:
                 return self._id
         else:
             # insert
+            self.__class__.on_create(document)
             with self.__database_handle as db:
                 collection_name = self.__class__.__name__
                 collection = db[collection_name]
@@ -80,8 +64,9 @@ class Schema:
                 return self._id
 
     def delete(self):
-        document = self.__to_dict()
+        document = self.to_dict()
         if '_id' in document:
+            self.__class__.on_delete(document)
             with self.__database_handle as db:
                 collection_name = self.__class__.__name__
                 collection = db[collection_name]
@@ -89,7 +74,7 @@ class Schema:
 
     def __validate(self):
         attributes = self.__class__.__dict__
-        document = self.__to_dict()
+        document = self.to_dict()
         for k, v in attributes.iteritems():
             if isinstance(v, Field):
                 # workaround for getattr(self, k) as it returns class attribute if value is None?!
@@ -102,7 +87,7 @@ class Schema:
 
     def __post_process(self):
         attributes = self.__class__.__dict__
-        document = self.__to_dict()
+        document = self.to_dict()
         for k, v in attributes.iteritems():
             if isinstance(v, Field):
                 # workaround for getattr(self, k) as it returns class attribute if value is None?!
@@ -114,7 +99,7 @@ class Schema:
                 # set attribute to self object
                 setattr(self, k, value)
 
-    def __to_dict(self):
+    def to_dict(self):
         # remove all undefined attributes and add defined attributes
         raw_document = self.__dict__
         document = dict()
@@ -135,14 +120,30 @@ class Schema:
 
     # class methods
     @classmethod
-    def find(cls, query=None, limit=None, order_by=None, reverse=False):
-        database_handle = Schema.get_handler()
+    def get_handler(cls):
+        """
+        Get DatabaseHandler
+
+        :return: DatabaseHandler
+        """
+        config = cls.__config__
+
+        if config is None:
+            handler = get_default_handler()
+        else:
+            handler = create_handler(**config)
+
+        return handler
+
+    @classmethod
+    def find(cls, query=None, limit=None, order_by=None, reverse=False, offset=0):
+        database_handle = cls.get_handler()
 
         with database_handle as db:
             collection_name = cls.__name__
             collection = db[collection_name]
 
-            results = collection.find(query, limit)
+            results = collection.find(query, limit, offset)
             results = [cls(__dictionary=document) for document in results]
 
             if order_by is not None:
@@ -168,7 +169,7 @@ class Schema:
 
     @classmethod
     def distinct(cls, key):
-        database_handle = Schema.get_handler()
+        database_handle = cls.get_handler()
         with database_handle as db:
             collection_name = cls.__name__
             collection = db[collection_name]
@@ -176,7 +177,7 @@ class Schema:
 
     @classmethod
     def count(cls, query=None):
-        database_handle = Schema.get_handler()
+        database_handle = cls.get_handler()
         with database_handle as db:
             collection_name = cls.__name__
             collection = db[collection_name]
@@ -187,7 +188,7 @@ class Schema:
 
     @classmethod
     def drop(cls):
-        database_handle = Schema.get_handler()
+        database_handle = cls.get_handler()
         with database_handle as db:
             collection_name = cls.__name__
             db.drop_collection(collection_name)
@@ -195,3 +196,37 @@ class Schema:
             return True
 
         return False
+
+    @classmethod
+    def create_index(cls, keys, **kwargs):
+        database_handle = cls.get_handler()
+        with database_handle as db:
+            collection_name = cls.__name__
+            collection = db[collection_name]
+
+            return collection.create_index(keys, **kwargs)
+
+        return False
+
+    @classmethod
+    def drop_index(cls, name):
+        database_handle = cls.get_handler()
+        with database_handle as db:
+            collection_name = cls.__name__
+            collection = db[collection_name]
+
+            return collection.drop_index(name)
+
+        return False
+
+    @classmethod
+    def on_create(cls, doc):
+        pass
+
+    @classmethod
+    def on_update(cls, doc):
+        pass
+
+    @classmethod
+    def on_delete(cls, doc):
+        pass

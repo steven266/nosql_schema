@@ -1,4 +1,5 @@
 from ...db import AbstractCollectionHandler
+from ...helper import SchemaId
 from bson.objectid import ObjectId
 
 
@@ -10,12 +11,13 @@ class CollectionHandler(AbstractCollectionHandler):
     def __init__(self, collection_handle):
         self.collection_handle = collection_handle
 
-    def find(self, query=None, limit=0):
+    def find(self, query=None, limit=0, offset=0):
         """
         Find all matching documents in database.
 
         :param query: Query to match with
         :param limit: Limit of documents to retrieve
+        :param offset: Number of documents to skip
         :return: List of documents
         """
         if limit is None:
@@ -23,7 +25,7 @@ class CollectionHandler(AbstractCollectionHandler):
 
         query = CollectionHandler.convert_ids(query)
 
-        result = self.collection_handle.find(filter=query, limit=limit)
+        result = self.collection_handle.find(filter=query, limit=limit).skip(offset)
 
         documents = []
         for document in result:
@@ -94,22 +96,57 @@ class CollectionHandler(AbstractCollectionHandler):
         query = CollectionHandler.convert_ids(query)
         return self.collection_handle.count(query)
 
+    def create_index(self, keys, **kwargs):
+        """
+        Creates an index on collection
+
+        :param keys: list of keys
+        :param kwargs: further arguments
+        """
+        self.collection_handle.create_index(keys, **kwargs)
+
+    def drop_index(self, name):
+        """
+        Drops an index on collection
+
+        :param name: index name
+        """
+        self.collection_handle.drop_index(name)
+
     @staticmethod
-    def convert_ids(query):
+    def convert_ids(query, is_id=False):
         """
         Casts all '_id' to 'ObjectId'
 
         :param query: Query that has to be transformed
+        :param is_id: Indicates that the current part derived from an '_id'
         :return: Transformed query (dict)
         """
         if not isinstance(query, dict):
             return {}
 
-        for k,v in query.iteritems():
-            if k == '_id':
-                if isinstance(v, dict):
-                    query[k] = CollectionHandler.convert_ids(v)
-                elif type(v) in [str, unicode]:
-                    query[k] = ObjectId(unicode(v))
+        new_query = query.copy()
 
-        return query
+        for k,v in new_query.iteritems():
+            if isinstance(v, SchemaId):
+                if v.is_list:
+                    new_query[k] = [ObjectId(unicode(id_)) for id_ in v.id_list]
+                else:
+                    new_query[k] = ObjectId(unicode(v.id_))
+            elif k == '_id':
+                if isinstance(v, dict):
+                    new_query[k] = CollectionHandler.convert_ids(v, True)
+                elif type(v) in [str, unicode]:
+                    new_query[k] = ObjectId(unicode(v))
+            elif is_id:
+                if type(v) in [str, unicode]:
+                    new_query[k] = ObjectId(unicode(v))
+                elif type(v) == list:
+                    new_query[k] = [ObjectId(unicode(id_)) for id_ in v]
+            elif isinstance(v, dict):
+                new_query[k] = CollectionHandler.convert_ids(v)
+            elif isinstance(v, list):
+                new_list = [CollectionHandler.convert_ids(x) for x in v]
+                new_query[k] = new_list
+
+        return new_query
