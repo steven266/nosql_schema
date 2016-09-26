@@ -1,5 +1,7 @@
 # Changelog
 
+## [0.3.0] [unreleased]
+
 ## [0.2.0] - 2016-09-26
 ### Added
 - Added possibility to create an object by dictionary
