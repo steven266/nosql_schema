@@ -2,6 +2,10 @@
 
 ## [0.3.0] [unreleased]
 
+## [0.2.1] - 2016-09-27
+### Fixed
+- Fixed error in `convert_ids` if non-dict is passed on recursive call
+
 ## [0.2.0] - 2016-09-26
 ### Added
 - Added possibility to create an object by dictionary
