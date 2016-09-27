@@ -123,7 +123,7 @@ class CollectionHandler(AbstractCollectionHandler):
         :return: Transformed query (dict)
         """
         if not isinstance(query, dict):
-            return {}
+            return query
 
         new_query = query.copy()
 
