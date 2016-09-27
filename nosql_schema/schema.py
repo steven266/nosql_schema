@@ -136,27 +136,31 @@ class Schema:
         return handler
 
     @classmethod
-    def find(cls, query=None, limit=None, order_by=None, reverse=False, offset=0):
+    def find(cls, query=None, limit=None, order_by=None, reverse=False, offset=0, sort_native=False):
         database_handle = cls.get_handler()
 
         with database_handle as db:
             collection_name = cls.__name__
             collection = db[collection_name]
 
-            results = collection.find(query, limit, offset)
-            results = [cls(__dictionary=document) for document in results]
+            if sort_native:
+                results = collection.find(query, limit, offset, order_by, reverse)
+                results = [cls(__dictionary=document) for document in results]
+            else:
+                results = collection.find(query, limit, offset)
+                results = [cls(__dictionary=document) for document in results]
 
-            if order_by is not None:
-                def deep_sort(d, order_key):
-                    keys = order_key.split('.')
-                    val = d
-                    for key in keys:
-                        val = getattr(val, key)
-                        if val is None:
-                            return None
-                    return val
+                if order_by is not None:
+                    def deep_sort(d, order_key):
+                        keys = order_key.split('.')
+                        val = d
+                        for key in keys:
+                            val = getattr(val, key)
+                            if val is None:
+                                return None
+                        return val
 
-                results = sorted(results, key=lambda d: deep_sort(d, order_by), reverse=reverse)
+                    results = sorted(results, key=lambda d: deep_sort(d, order_by), reverse=reverse)
 
             return results
 

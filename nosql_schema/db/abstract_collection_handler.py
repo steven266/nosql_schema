@@ -13,12 +13,15 @@ class AbstractCollectionHandler():
         pass
 
     @abstractmethod
-    def find(self, query=None, limit=None):
+    def find(self, query=None, limit=None, offset=0, order_by=None, reverse=False):
         """
         Find all matching documents in database.
 
         :param query: Query to match with
         :param limit: Limit of documents to retrieve
+        :param offset: Offset
+        :param order_by: Field to order results by
+        :param reverse: Reverse ordering
         :return: List of documents
         """
         pass

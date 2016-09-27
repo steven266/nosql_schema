@@ -2,6 +2,10 @@
 
 ## [0.3.0] [unreleased]
 
+## [0.2.2] - 2016-09-27
+### Fixed
+- Fixed error if both `order_by` and `limit` are used: use `sort_native=True`
+
 ## [0.2.1] - 2016-09-27
 ### Fixed
 - Fixed error in `convert_ids` if non-dict is passed on recursive call
