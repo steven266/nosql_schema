@@ -1,6 +1,7 @@
 from ...db import AbstractCollectionHandler
 from ...helper import SchemaId
 from bson.objectid import ObjectId
+from pymongo import ASCENDING, DESCENDING
 
 
 class CollectionHandler(AbstractCollectionHandler):
@@ -11,21 +12,31 @@ class CollectionHandler(AbstractCollectionHandler):
     def __init__(self, collection_handle):
         self.collection_handle = collection_handle
 
-    def find(self, query=None, limit=0, offset=0):
+    def find(self, query=None, limit=None, offset=0, order_by=None, reverse=False):
         """
         Find all matching documents in database.
 
         :param query: Query to match with
         :param limit: Limit of documents to retrieve
-        :param offset: Number of documents to skip
+        :param offset: Offset
+        :param order_by: Field to order results by
+        :param reverse: Reverse ordering
         :return: List of documents
         """
         if limit is None:
             limit = 0
 
+        if order_by is None:
+            order_by = '_id'
+
+        if reverse:
+            reverse = DESCENDING
+        else:
+            reverse = ASCENDING
+
         query = CollectionHandler.convert_ids(query)
 
-        result = self.collection_handle.find(filter=query, limit=limit).skip(offset)
+        result = self.collection_handle.find(filter=query, limit=limit).sort(order_by, reverse).skip(offset)
 
         documents = []
         for document in result:

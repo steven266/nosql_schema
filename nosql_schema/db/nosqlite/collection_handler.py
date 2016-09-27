@@ -10,16 +10,33 @@ class CollectionHandler(AbstractCollectionHandler):
     def __init__(self, collection_handle):
         self.collection_handle = collection_handle
 
-    def find(self, query=None, limit=None, offset=0):
+    def find(self, query=None, limit=None, offset=0, order_by=None, reverse=False):
         """
         Find all matching documents in database.
 
         :param query: Query to match with
         :param limit: Limit of documents to retrieve
+        :param offset: Offset
+        :param order_by: Field to order results by
+        :param reverse: Reverse ordering
         :return: List of documents
         """
         query = CollectionHandler.convert_ids(query)
-        return self.collection_handle.find(query, limit)[offset:]
+        results = self.collection_handle.find(query, limit)[offset:]
+
+        if order_by is not None:
+            def deep_sort(d, order_key):
+                keys = order_key.split('.')
+                val = d
+                for key in keys:
+                    val = getattr(val, key)
+                    if val is None:
+                        return None
+                return val
+
+            results = sorted(results, key=lambda d: deep_sort(d, order_by), reverse=reverse)
+
+        return results
 
     def delete(self, query):
         """
