@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.2.3] - 2017-04-03
+### Added
+- Added `after_update` hook to schema
+
 ## [0.2.2] - 2016-09-27
 ### Fixed
 - Fixed error if both `order_by` and `limit` are used: use `sort_native=True`
