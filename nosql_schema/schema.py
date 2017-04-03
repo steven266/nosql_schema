@@ -61,6 +61,7 @@ class Schema:
                 collection = db[collection_name]
                 document = collection.insert(document)
                 self._id = document['_id']
+                self.__class__.after_create(document)
                 return self._id
 
     def delete(self):
@@ -225,6 +226,10 @@ class Schema:
 
     @classmethod
     def on_create(cls, doc):
+        pass
+
+    @classmethod
+    def after_create(cls, doc):
         pass
 
     @classmethod
