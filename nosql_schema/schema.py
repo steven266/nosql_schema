@@ -36,6 +36,15 @@ class Schema:
                 if field_dictionary and k in field_dictionary:
                     setattr(self, k, field_dictionary.pop(k))
 
+    @property
+    def id(self):
+        """
+        Alias for _id
+        
+        :return: _id
+        """
+        return self._id
+
     def save(self):
         if not self.__validate():
             return False
