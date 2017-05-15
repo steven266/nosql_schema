@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.2.4] [unreleased]
+## [0.2.4] - 2017-05-15
 ### Added
 - Added alias `id` for `_id`
 - Added `allowed_type` and `custom_type` to `ListField`
