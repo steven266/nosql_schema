@@ -3,6 +3,7 @@
 ## [0.2.4] [unreleased]
 ### Added
 - Added alias `id` for `_id`
+- Added `allowed_type` and `custom_type` to `ListField`
 
 ## [0.2.3] - 2017-04-03
 ### Added
