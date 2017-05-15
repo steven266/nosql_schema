@@ -176,3 +176,13 @@ class ListField(Field):
             self.allowed_values = kwargs.pop('allowed_values')
         except KeyError:
             self.allowed_values = None
+
+        try:
+            self.allowed_type = kwargs.pop('allowed_type')
+        except KeyError:
+            self.allowed_type = None
+
+        try:
+            self.custom_type = kwargs.pop('custom_type')
+        except KeyError:
+            self.custom_type = None

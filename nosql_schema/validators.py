@@ -167,4 +167,23 @@ class ListValidator(Validator):
                 if item not in field.allowed_values:
                     return False
 
+        if field.allowed_type:
+            for item in value:
+                if not isinstance(item, field.allowed_type):
+                    return False
+
+        if field.custom_type:
+            # Use custom type to check objects for key, value
+            for item in value:
+                temp = item
+                if not isinstance(item, dict):
+                    temp = item.__dict__
+
+                for key, value in temp.iteritems():
+                    try:
+                        if not isinstance(value, field.custom_type[key]):
+                            return False
+                    except KeyError:
+                        return False
+
         return True
