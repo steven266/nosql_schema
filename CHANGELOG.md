@@ -1,6 +1,9 @@
 # Changelog
 
 ## [0.2.5] [unreleased]
+### Added
+- Added *.egg-info to .gitignore
+
 ### Fixed
 - Fixed bug in RegexpValidator
 
