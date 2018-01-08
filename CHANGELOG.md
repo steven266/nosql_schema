@@ -1,6 +1,8 @@
 # Changelog
 
 ## [0.2.5] [unreleased]
+### Fixed
+- Fixed bug in RegexpValidator
 
 ## [0.2.4] - 2017-05-15
 ### Added
