@@ -1,5 +1,7 @@
 # Changelog
 
+## [0.2.6] [unreleased]
+
 ## [0.2.5] - 2018-01-09
 ### Added
 - Added *.egg-info to .gitignore
