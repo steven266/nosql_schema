@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.5] - 2018-01-09
+### Added
+- Added *.egg-info to .gitignore
+
+### Fixed
+- Fixed bug in RegexpValidator
+
 ## [0.2.4] - 2017-05-15
 ### Added
 - Added alias `id` for `_id`

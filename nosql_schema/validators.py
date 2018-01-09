@@ -110,7 +110,7 @@ class RegexpValidator(Validator):
     @staticmethod
     def validate(value=None, field=None):
         # skip all tests if not required and not defined
-        if not field.required and value is None:
+        if not field.required and (value is None or value == ''):
             return True
 
         if field.regexp:
